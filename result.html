@@ -14,19 +14,24 @@
     <h1>💧 Weekly AI Water Consumption</h1>
     <div id="result"></div>
 
-    <button id="shareBtn">Share Instagram</button>
+    <!-- Canvas ile görsel oluşturmak için buton -->
+    <button id="downloadBtn">Download Shareable Image</button>
   </div>
+
+  <canvas id="shareCanvas" style="display:none;"></canvas>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const minutes = parseFloat(params.get('minutes'));
     const name = params.get('name') || "User"; 
     const resultDiv = document.getElementById("result");
-    const shareBtn = document.getElementById("shareBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const canvas = document.getElementById("shareCanvas");
+    const ctx = canvas.getContext("2d");
 
     if(!minutes || minutes <= 0){
       resultDiv.innerHTML = "<p class='error'>Invalid input!</p>";
-      shareBtn.style.display = "none";
+      downloadBtn.style.display = "none";
     } else {
       const weeklyMinutes = minutes * 7;
       const waterLiters = (weeklyMinutes * 0.025).toFixed(2);
@@ -41,28 +46,35 @@
           <img src="cup.png" alt="Cup Icon" class="cup-icon">
         </p>
       `;
+
+      downloadBtn.addEventListener("click", function() {
+        const width = 800;
+        const height = 600;
+        canvas.width = width;
+        canvas.height = height;
+
+        const bgImg = new Image();
+        bgImg.src = "bg.png";
+        bgImg.onload = () => {
+          ctx.drawImage(bgImg, 0, 0, width, height);
+
+        ctx.fillStyle = "#00796b";
+        ctx.font = "30px Arial";
+        ctx.fillText("💧 Weekly AI Water Consumption", 50, 60);
+
+        ctx.font = "24px Arial";
+        ctx.fillText(`${name}'s AI Usage: ${(minutes / 60).toFixed(2)} hours/day`, 50, 120);
+        ctx.fillText(`Weekly Water Consumption: ${waterLiters} liters`, 50, 160);
+        ctx.fillText(`Cups: ${cups}`, 50, 200);
+
+
+          const link = document.createElement("a");
+          link.download = "ai_water_consumption.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        }
+      });
     }
-
-    shareBtn.addEventListener("click", function() {
-  const shareText = `${name} used AI for ${(minutes / 60).toFixed(2)} hours daily, consuming approx ${waterLiters} liters of water per week! 💧`;
-
-  // Web Share API kontrolü
-  if (navigator.share) {
-    navigator.share({
-      title: "AI Water Consumption",
-      text: shareText
-      // url eklenebilir: url: window.location.href
-    })
-    .then(() => console.log("Successfully shared"))
-    .catch(err => console.log("Share cancelled or failed", err));
-  } else {
-    // Desteklenmezse kopyala
-    navigator.clipboard.writeText(shareText)
-      .then(() => alert("Share text copied to clipboard! Paste it in your Instagram Story."))
-      .catch(() => alert("Failed to copy share text. Try manually."));
-  }
-});
-
   </script>
 </body>
 </html>

@@ -3,45 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Water Consumption Input</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>AI Water Consumption Result</title>
+  <link rel="stylesheet" href="result.css">
 </head>
 <body>
   <div class="card">
     <div class="logo">
-        <a href="#"><img src="logo.png" alt="Logo"></a>
+        <a href="index.html"><img src="logo.png" alt="Logo"></a>
     </div>
-    <h1>💧 AI Water Consumption Input</h1>
+    <h1>💧 Weekly AI Water Consumption</h1>
+    <div id="result"></div>
 
-    <p>What is your name?</p>
-    <input type="text" id="userName" placeholder="Enter your name">
-
-    <p>On average, how many hours a day do you chat with artificial intelligence?</p>
-    <input type="number" id="dailyHours" placeholder="Example: 0.5" step="0.01" min="0">
-    <br>
-    <button id="submitBtn">Ok</button>
-    <div id="feedback"></div>
+    <button id="downloadBtn">Download Shareable Image</button>
   </div>
 
+  <canvas id="shareCanvas" style="display:none;"></canvas>
+
   <script>
-    document.getElementById("submitBtn").addEventListener("click", function() {
-      const name = document.getElementById("userName").value.trim();
-      const hours = parseFloat(document.getElementById("dailyHours").value);
+    const params = new URLSearchParams(window.location.search);
+    const minutes = parseFloat(params.get('minutes'));
+    const name = params.get('name') || "User"; 
+    const resultDiv = document.getElementById("result");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const canvas = document.getElementById("shareCanvas");
+    const ctx = canvas.getContext("2d");
 
-      if(!name){
-        alert("Please enter your name!");
-        return;
-      }
+    if(!minutes || minutes <= 0){
+      resultDiv.innerHTML = "<p class='error'>Invalid input!</p>";
+      downloadBtn.style.display = "none";
+    } else {
+      const weeklyMinutes = minutes * 7;
+      const waterLiters = (weeklyMinutes * 0.025).toFixed(2);
+      const cups = Math.round(waterLiters / 0.25);
 
-      if(!hours || hours <= 0){
-        alert("Please enter a valid number of hours!");
-        return;
-      }
+      resultDiv.innerHTML = `
+        <p><b>${name}</b>, your weekly AI water consumption:</p>
+        <p>Daily usage: <b>${(minutes / 60).toFixed(2)} hours</b></p>
+        <p>Weekly AI water consumption: <b>${waterLiters} liters</b></p>
+        <p class="cups">
+          Cups: <b>${cups}</b> 
+          <img src="cup.png" alt="Cup Icon" class="cup-icon">
+        </p>
+      `;
 
-      const minutes = hours * 60;
+      downloadBtn.addEventListener("click", function() {
+        const width = 800;
+        const height = 600;
+        canvas.width = width;
+        canvas.height = height;
 
-      window.location.href = `result.html?name=${encodeURIComponent(name)}&minutes=${minutes}`;
-    });
+        // Arka plan
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, "#a2d5f2");
+        gradient.addColorStop(1, "#07689f");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Başlık
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 36px Arial";
+        ctx.fillText("💧 Weekly AI Water Consumption", 50, 60);
+
+        // Bilgi kutusu
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
+        ctx.fillRect(50, 100, 700, 180);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "28px Arial";
+        ctx.fillText(`${name}'s AI Usage: ${(minutes / 60).toFixed(2)} hours/day`, 70, 150);
+        ctx.fillText(`Weekly Water Consumption: ${waterLiters} liters`, 70, 200);
+        ctx.fillText(`Cups: ${cups}`, 70, 250);
+
+        // Su damlası simgeleri
+        const dropImg = new Image();
+        dropImg.src = "drop.png";
+        dropImg.onload = () => {
+          for(let i=0; i<Math.min(cups, 20); i++){
+            const x = 600 + (i%5)*35;
+            const y = 150 + Math.floor(i/5)*50;
+            ctx.drawImage(dropImg, x, y, 30, 30);
+          }
+
+          // Görseli indir
+          const link = document.createElement("a");
+          link.download = "ai_water_consumption.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        };
+
+        // Eğer drop.png yüklenmezse
+        dropImg.onerror = () => {
+          const link = document.createElement("a");
+          link.download = "ai_water_consumption.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        };
+      });
+    }
   </script>
 </body>
 </html>
