@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Water Consumption Result</title>
+  <link rel="stylesheet" href="result.css">
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+        <a href="index.html"><img src="logo.png" alt="Logo"></a>
+    </div>
+    <h1>💧 Weekly AI Water Consumption</h1>
+    <div id="result"></div>
+
+    <button id="shareBtn">Share Instagram</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const minutes = parseFloat(params.get('minutes'));
+    const name = params.get('name') || "User"; 
+    const resultDiv = document.getElementById("result");
+    const shareBtn = document.getElementById("shareBtn");
+
+    if(!minutes || minutes <= 0){
+      resultDiv.innerHTML = "<p class='error'>Invalid input!</p>";
+      shareBtn.style.display = "none";
+    } else {
+      const weeklyMinutes = minutes * 7;
+      const waterLiters = (weeklyMinutes * 0.025).toFixed(2);
+      const cups = Math.round(waterLiters / 0.25);
+
+      resultDiv.innerHTML = `
+        <p><b>${name}</b>, your weekly AI water consumption:</p>
+        <p>Daily usage: <b>${(minutes / 60).toFixed(2)} hours</b></p>
+        <p>Weekly AI water consumption: <b>${waterLiters} liters</b></p>
+        <p class="cups">
+          Cups: <b>${cups}</b> 
+          <img src="cup.png" alt="Cup Icon" class="cup-icon">
+        </p>
+      `;
+    }
+
+    shareBtn.addEventListener("click", function() {
+  const shareText = `${name} used AI for ${(minutes / 60).toFixed(2)} hours daily, consuming approx ${waterLiters} liters of water per week! 💧`;
+
+  // Web Share API kontrolü
+  if (navigator.share) {
+    navigator.share({
+      title: "AI Water Consumption",
+      text: shareText
+      // url eklenebilir: url: window.location.href
+    })
+    .then(() => console.log("Successfully shared"))
+    .catch(err => console.log("Share cancelled or failed", err));
+  } else {
+    // Desteklenmezse kopyala
+    navigator.clipboard.writeText(shareText)
+      .then(() => alert("Share text copied to clipboard! Paste it in your Instagram Story."))
+      .catch(() => alert("Failed to copy share text. Try manually."));
+  }
+});
+
+  </script>
+</body>
+</html>

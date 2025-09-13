@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 50px;
+
+  background-image: url('bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  color: white;
+}
+
+.card {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+#result p {
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+.cups {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cup-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
