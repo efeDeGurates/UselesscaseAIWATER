@@ -14,7 +14,6 @@
     <h1>💧 Weekly AI Water Consumption</h1>
     <div id="result"></div>
 
-    <!-- Canvas ile görsel oluşturmak için buton -->
     <button id="downloadBtn">Download Shareable Image</button>
   </div>
 
@@ -53,26 +52,46 @@
         canvas.width = width;
         canvas.height = height;
 
-        const bgImg = new Image();
-        bgImg.src = "bg.png";
-        bgImg.onload = () => {
-          ctx.drawImage(bgImg, 0, 0, width, height);
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, "#a2d5f2");
+        gradient.addColorStop(1, "#07689f");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
 
-        ctx.fillStyle = "#00796b";
-        ctx.font = "30px Arial";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 36px Arial";
         ctx.fillText("💧 Weekly AI Water Consumption", 50, 60);
 
-        ctx.font = "24px Arial";
-        ctx.fillText(`${name}'s AI Usage: ${(minutes / 60).toFixed(2)} hours/day`, 50, 120);
-        ctx.fillText(`Weekly Water Consumption: ${waterLiters} liters`, 50, 160);
-        ctx.fillText(`Cups: ${cups}`, 50, 200);
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
+        ctx.fillRect(50, 100, 700, 180);
 
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "28px Arial";
+        ctx.fillText(`${name}'s AI Usage: ${(minutes / 60).toFixed(2)} hours/day`, 70, 150);
+        ctx.fillText(`Weekly Water Consumption: ${waterLiters} liters`, 70, 200);
+        ctx.fillText(`Cups: ${cups}`, 70, 250);
+
+        const dropImg = new Image();
+        dropImg.src = "drop.png";
+        dropImg.onload = () => {
+          for(let i=0; i<Math.min(cups, 20); i++){
+            const x = 600 + (i%5)*35;
+            const y = 150 + Math.floor(i/5)*50;
+            ctx.drawImage(dropImg, x, y, 30, 30);
+          }
 
           const link = document.createElement("a");
           link.download = "ai_water_consumption.png";
           link.href = canvas.toDataURL("image/png");
           link.click();
-        }
+        };
+
+        dropImg.onerror = () => {
+          const link = document.createElement("a");
+          link.download = "ai_water_consumption.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        };
       });
     }
   </script>
