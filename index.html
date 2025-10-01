@@ -1,46 +1,100 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Water Consumption Input</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AI Su Tüketimi — Giriş & Seçimler</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-        <a href="#"><img src="logo.png" alt="Logo"></a>
+  <main class="container">
+    <div class="card">
+      <h1>💧 AI Su Tüketimi Hesaplayıcı</h1>
+      <p>İsmini gir ve kullandığın AI türlerini seç — günlük ortalama dakika gir.</p>
+
+      <label for="name">İsim</label>
+      <input id="name" type="text" placeholder="Adın..." />
+
+      <h2>Kullandığın yapay zekalar</h2>
+
+      <!-- Metin -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_text"/> Metin üretme</label>
+        <input type="number" id="time_text" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Görsel -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_image"/> Görsel oluşturma</label>
+        <input type="number" id="time_image" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Kod -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_code"/> Kod yazma</label>
+        <input type="number" id="time_code" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Ses -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_audio"/> Ses üretme</label>
+        <input type="number" id="time_audio" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Video -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_video"/> Video oluşturma</label>
+        <input type="number" id="time_video" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Çeviri -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_translate"/> Çeviri</label>
+        <input type="number" id="time_translate" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Veri analizi -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_data"/> Veri analizi</label>
+        <input type="number" id="time_data" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <!-- Sohbet -->
+      <div class="ai-row">
+        <label><input type="checkbox" id="ai_chat"/> Sohbet asistanı</label>
+        <input type="number" id="time_chat" class="minutes" placeholder="dk/gün" min="0" disabled/>
+      </div>
+
+      <div class="row">
+        <button id="calcBtn" class="btn">Hesapla</button>
+      </div>
     </div>
-    <h1>💧 AI Water Consumption Input</h1>
-
-    <p>What is your name?</p>
-    <input type="text" id="userName" placeholder="Enter your name">
-
-    <p>On average, how many hours a day do you chat with artificial intelligence?</p>
-    <input type="number" id="dailyHours" placeholder="Example: 0.5" step="0.01" min="0">
-    <br>
-    <button id="submitBtn">Ok</button>
-    <div id="feedback"></div>
-  </div>
+  </main>
 
   <script>
-    document.getElementById("submitBtn").addEventListener("click", function() {
-      const name = document.getElementById("userName").value.trim();
-      const hours = parseFloat(document.getElementById("dailyHours").value);
+    const options = [
+      "text","image","code","audio","video","translate","data","chat"
+    ];
+    options.forEach(opt=>{
+      const cb=document.getElementById("ai_"+opt);
+      const inp=document.getElementById("time_"+opt);
+      cb.addEventListener("change",()=>{
+        inp.disabled=!cb.checked;
+        if(!cb.checked) inp.value="";
+      });
+    });
 
-      if(!name){
-        alert("Please enter your name!");
-        return;
-      }
-
-      if(!hours || hours <= 0){
-        alert("Please enter a valid number of hours!");
-        return;
-      }
-
-      const minutes = hours * 60;
-
-      window.location.href = `result.html?name=${encodeURIComponent(name)}&minutes=${minutes}`;
+    document.getElementById("calcBtn").addEventListener("click",()=>{
+      const name=document.getElementById("name").value.trim();
+      if(!name){alert("İsmini gir!");return;}
+      const params=new URLSearchParams();
+      params.set("name",name);
+      options.forEach(opt=>{
+        const cb=document.getElementById("ai_"+opt);
+        const val=parseFloat(document.getElementById("time_"+opt).value||0);
+        if(cb.checked && val>0) params.set(opt+"_min",val);
+      });
+      window.location.href="result.html?"+params.toString();
     });
   </script>
 </body>

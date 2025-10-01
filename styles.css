@@ -1,57 +1,34 @@
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 50px;
-
-
-  background-image: url('bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed; 
-
-  color: white;
+:root{
+  --bg: #f4fbfb;
+  --card: #ffffff;
+  --accent: #00796b;
+  --muted: #6b7280;
+  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-.card {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 16px;
-  padding: 30px;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:#0f1724}
+.container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:100%;max-width:720px;background:var(--card);border-radius:14px;padding:28px;box-shadow:var(--shadow)}
+.logo img{height:48px;margin-bottom:10px}
+h1{margin:6px 0 10px;font-size:22px}
+h2{font-size:16px;margin:18px 0 8px}
+label{display:block;margin-top:12px;font-weight:600}
+input[type="text"], input[type="number"]{
+  width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6eef0;margin-top:6px;font-size:15px
 }
-
-h1 {
-  margin-bottom: 20px;
+.btn{
+  background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:none;font-weight:600;cursor:pointer
 }
-
-input {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  width: 70%;
-  font-size: 16px;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 12px;
-  background: #ffcc00;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-#feedback {
-  margin-top: 15px;
-  font-size: 18px;
+.row{margin-top:18px;display:flex;gap:8px;align-items:center}
+.muted{color:var(--muted);margin-top:12px}
+.small{font-size:13px}
+.ai-row{display:flex;gap:12px;align-items:center;margin-top:12px}
+.ai-row .minutes{width:150px}
+.checkbox{display:flex;align-items:center;gap:8px}
+.checkbox input{width:18px;height:18px}
+@media (max-width:520px){
+  .ai-row{flex-direction:column;align-items:stretch}
+  .ai-row .minutes{width:100%}
 }

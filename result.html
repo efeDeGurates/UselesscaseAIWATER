@@ -1,79 +1,113 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Water Consumption Result</title>
-  <link rel="stylesheet" href="result.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AI Su Tüketimi — Sonuç</title>
+  <link rel="stylesheet" href="result.css"/>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-        <a href="index.html"><img src="logo.png" alt="Logo"></a>
+  <main class="container">
+    <div class="card">
+      <h1>💧 Haftalık AI Su Tüketimin</h1>
+      <div id="summary">Hesaplanıyor...</div>
+
+      <div class="controls">
+        <button id="backBtn" class="btn light">Geri</button>
+        <button id="shareBtn" class="btn">Paylaşılabilir Görsel İndir</button>
+      </div>
+
+      <canvas id="shareCanvas" style="display:none;"></canvas>
     </div>
-    <h1>💧 Weekly AI Water Consumption</h1>
-    <div id="result"></div>
-
-    <button id="downloadBtn">Download Shareable Image</button>
-  </div>
-
-  <canvas id="shareCanvas" style="display:none;"></canvas>
+  </main>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const minutes = parseFloat(params.get('minutes'));
-    const name = params.get('name') || "User"; 
-    const resultDiv = document.getElementById("result");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const canvas = document.getElementById("shareCanvas");
-    const ctx = canvas.getContext("2d");
+    // katsayılar (litre / dakika)
+    const RATES={
+      text:0.025,
+      image:0.060,
+      code:0.035,
+      audio:0.050,
+      video:0.080,
+      translate:0.015,
+      data:0.030,
+      chat:0.025
+    };
+    const labels={
+      text:"Metin üretme",
+      image:"Görsel oluşturma",
+      code:"Kod yazma",
+      audio:"Ses üretme",
+      video:"Video oluşturma",
+      translate:"Çeviri",
+      data:"Veri analizi",
+      chat:"Sohbet asistanı"
+    };
 
-    if(!minutes || minutes <= 0){
-      resultDiv.innerHTML = "<p class='error'>Invalid input!</p>";
-      downloadBtn.style.display = "none";
-    } else {
-      const weeklyMinutes = minutes * 7;
-      const waterLiters = (weeklyMinutes * 0.025).toFixed(2);
-      const cups = Math.round(waterLiters / 0.25);
+    const params=new URLSearchParams(window.location.search);
+    const name=params.get("name")||"Kullanıcı";
 
-      resultDiv.innerHTML = `
-        <p><b>${name}</b>, your weekly AI water consumption:</p>
-        <p>Daily usage: <b>${(minutes / 60).toFixed(2)} hours</b></p>
-        <p>Weekly AI water consumption: <b>${waterLiters} liters</b></p>
-        <p class="cups">
-          Cups: <b>${cups}</b> 
-          <img src="cup.png" alt="Cup Icon" class="cup-icon">
-        </p>
-      `;
+    let total=0;
+    let details=[];
+    Object.keys(RATES).forEach(k=>{
+      const min=parseFloat(params.get(k+"_min")||0);
+      if(min>0){
+        const liters=(min*RATES[k]*7).toFixed(3);
+        details.push({label:labels[k],minutes:min,liters:liters});
+        total+=parseFloat(liters);
+      }
+    });
 
-      downloadBtn.addEventListener("click", function() {
-        const width = 800;
-        const height = 600;
-        canvas.width = width;
-        canvas.height = height;
-
-        const bgImg = new Image();
-        bgImg.src = "bg.png";
-        bgImg.onload = () => {
-          ctx.drawImage(bgImg, 0, 0, width, height);
-
-        ctx.fillStyle = "#00796b";
-        ctx.font = "30px Arial";
-        ctx.fillText("💧 Weekly AI Water Consumption", 50, 60);
-
-        ctx.font = "24px Arial";
-        ctx.fillText(`${name}'s AI Usage: ${(minutes / 60).toFixed(2)} hours/day`, 50, 120);
-        ctx.fillText(`Weekly Water Consumption: ${waterLiters} liters`, 50, 160);
-        ctx.fillText(`Cups: ${cups}`, 50, 200);
-
-
-          const link = document.createElement("a");
-          link.download = "ai_water_consumption.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }
+    const summary=document.getElementById("summary");
+    if(details.length===0){
+      summary.innerHTML="<p class='error'>Hiç kullanım seçilmemiş. Lütfen geri dön.</p>";
+      document.getElementById("shareBtn").style.display="none";
+    }else{
+      let html=`<p><strong>${name}</strong>, haftalık su tüketim hesaplaman:</p><ul>`;
+      details.forEach(d=>{
+        html+=`<li>${d.label}: ${d.minutes} dk/gün → <strong>${d.liters} L/hafta</strong></li>`;
       });
+      html+="</ul>";
+      html+=`<p><strong>Toplam: ${total.toFixed(3)} L/hafta</strong></p>`;
+      summary.innerHTML=html;
     }
+
+    document.getElementById("backBtn").addEventListener("click",()=>history.back());
+
+    // Paylaşılabilir görsel oluşturma
+    document.getElementById("shareBtn").addEventListener("click",()=>{
+      const canvas=document.getElementById("shareCanvas");
+      const width=900,height=600;
+      canvas.width=width; canvas.height=height;
+      const ctx=canvas.getContext("2d");
+
+      ctx.fillStyle="#f8fffe";
+      ctx.fillRect(0,0,width,height);
+
+      ctx.fillStyle="#004d40";
+      ctx.font="28px Arial";
+      ctx.fillText("💧 Haftalık AI Su Tüketimi",32,56);
+
+      ctx.font="20px Arial";
+      ctx.fillStyle="#073b36";
+      ctx.fillText(`${name} — Toplam: ${total.toFixed(3)} L/hafta`,32,96);
+
+      ctx.font="18px Arial";
+      ctx.fillStyle="#0f1724";
+      let y=150;
+      details.forEach(d=>{
+        ctx.fillText(`${d.label}: ${d.minutes} dk/gün → ${d.liters} L/hafta`,32,y);
+        y+=34;
+      });
+
+      ctx.font="16px Arial";
+      ctx.fillStyle="#6b7280";
+
+      const link=document.createElement("a");
+      link.download="ai_water_consumption.png";
+      link.href=canvas.toDataURL("image/png");
+      link.click();
+    });
   </script>
 </body>
 </html>
