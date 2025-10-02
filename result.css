@@ -1,25 +1,99 @@
-:root{
-  --bg:#f4fbfb;
-  --card:#ffffff;
-  --accent:#00796b;
-  --light:#effaf8;
-  --muted:#6b7280;
+:root {
+  --bg: #f4fbfb;
+  --card: #ffffff;
+  --accent: #00796b;
+  --light: #effaf8;
+  --muted: #6b7280;
   font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
 }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);color:#0f1724}
-.container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{width:100%;max-width:820px;background:var(--card);border-radius:14px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,0.06)}
-.logo img{height:44px;margin-bottom:8px}
-h1{margin:4px 0 12px;font-size:22px}
-.summary{margin-top:6px;font-size:15px}
-.breakdown{margin-left:18px}
-.breakdown li{margin:8px 0}
-.controls{display:flex;gap:10px;margin-top:18px;align-items:center}
-.btn{background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
-.btn.light{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-.error{color:#c62828;font-weight:700}
-@media (max-width:560px){
-  .card{padding:18px}
-  .controls{flex-direction:column;align-items:stretch}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: #0f1724;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 820px;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Logo */
+.logo img {
+  height: 44px;
+  margin-bottom: 8px;
+}
+
+/* Başlıklar */
+h1 {
+  margin: 4px 0 12px;
+  font-size: 22px;
+}
+
+.summary {
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.breakdown {
+  margin-left: 18px;
+}
+.breakdown li {
+  margin: 8px 0;
+}
+
+/* buton */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  align-items: center;
+}
+
+.btn {
+  background: var(--accent);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn.light {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.error {
+  color: #c62828;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .card {
+    padding: 18px;
+  }
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
