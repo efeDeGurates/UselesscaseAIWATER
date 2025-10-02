@@ -146,6 +146,24 @@ input[type="number"]:focus {
   height: 18px;
 }
 
+.ai-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ai-row label {
+  flex: 1;
+}
+
+.ai-row .minutes {
+  width: 150px;
+  text-align: right;
+}
+
+
 @media (max-width: 520px) {
   .ai-row {
     flex-direction: column;
